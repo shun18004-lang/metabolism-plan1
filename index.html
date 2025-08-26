@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>基础代谢与减脂计划</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #result {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>基础代谢与减脂计划</h1>
+
+        <div class="form-group">
+            <label for="age">年龄：</label>
+            <input type="number" id="age" placeholder="输入您的年龄">
+        </div>
+        <div class="form-group">
+            <label for="weight">体重（kg）：</label>
+            <input type="number" id="weight" placeholder="输入您的体重">
+        </div>
+        <div class="form-group">
+            <label for="height">身高（cm）：</label>
+            <input type="number" id="height" placeholder="输入您的身高">
+        </div>
+        <div class="form-group">
+            <label for="gender">性别：</label>
+            <select id="gender">
+                <option value="male">男</option>
+                <option value="female">女</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="goal">期望减脂速率（kg/月）：</label>
+            <input type="number" id="goal" placeholder="输入您的期望减脂速率">
+        </div>
+
+        <button onclick="generatePlan()">生成计划</button>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        function calculateBMR(age, weight, height, gender) {
+            let BMR;
+            if (gender === "male") {
+                BMR = 88.362 + (13.397 * weight) + (4.799 * height) - (5.677 * age);
+            } else {
+                BMR = 447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age);
+            }
+            return BMR;
+        }
+
+        function generateDietPlan(BMR, goal) {
+            let calorieDeficit = goal * 7700 / 30; // 每月减脂目标转化为每日消耗
+            let dailyCalorieIntake = BMR - calorieDeficit;
+
+            let dietPlans = [
+                { name: "饮食方案 1", calories: dailyCalorieIntake - 200 },
+                { name: "饮食方案 2", calories: dailyCalorieIntake - 150 },
+                { name: "饮食方案 3", calories: dailyCalorieIntake },
+                { name: "饮食方案 4", calories: dailyCalorieIntake + 100 },
+                { name: "饮食方案 5", calories: dailyCalorieIntake + 150 }
+            ];
+
+            return dietPlans;
+        }
+
+        function generateExercisePlan() {
+            return [
+                "开合跳 50次",
+                "俯卧撑 20次",
+                "深蹲 30次",
+                "跑步 30分钟",
+                "仰卧起坐 30次"
+            ];
+        }
+
+        function generatePlan() {
+            let age = document.getElementById("age").value;
+            let weight = document.getElementById("weight").value;
+            let height = document.getElementById("height").value;
+            let gender = document.getElementById("gender").value;
+            let goal = document.getElementById("goal").value;
+
+            if (!age || !weight || !height || !goal) {
+                alert("请填写所有信息！");
+                return;
+            }
+
+            let BMR = calculateBMR(age, weight, height, gender);
+            let dietPlans = generateDietPlan(BMR, goal);
+            let exercisePlan = generateExercisePlan();
+
+            let resultHTML = `<h2>您的基础代谢率 (BMR): ${BMR.toFixed(2)} kcal/天</h2>`;
+            resultHTML += `<h3>五套饮食方案：</h3><ul>`;
+            dietPlans.forEach(plan => {
+                resultHTML += `<li>${plan.name}: 每日摄入 ${plan.calories.toFixed(2)} kcal</li>`;
+            });
+            resultHTML += `</ul><h3>运动计划：</h3><ul>`;
+            exercisePlan.forEach(exercise => {
+                resultHTML += `<li>${exercise}</li>`;
+            });
+            resultHTML += `</ul>`;
+
+            document.getElementById("result").innerHTML = resultHTML;
+        }
+    </script>
+</body>
+</html>
